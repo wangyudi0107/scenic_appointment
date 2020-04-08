@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>景区管理员登录</title>
+		<link rel="stylesheet" type="text/css" href="__STATIC__/layui/css/layui.css" />
+		<style type="text/css">
+			body {
+				background-image: url('__STATIC__/img/login/login_bg.png');
+				background-size: 100%;
+			}
+
+			.form {
+				width: 20%;
+				padding-top: 1px;
+				background-color: white;
+				margin-left: 40%;
+				text-align: center;
+				margin-top: 16%;
+				opacity: 0.8;
+				border-radius: 5px;
+			}
+
+			.sub {
+				width: 40%;
+				background-color: skyblue;
+				color: white;
+				margin-bottom: 3%;
+				border: 1px solid skyblue;
+				font-size: 16px;
+			}
+
+			form {
+				margin-top: 5%;
+			}
+			
+			h2{
+				color: skyblue;
+			}
+			
+			.account,
+			.pwd,.code{
+				background-color: transparent;
+				border: 1px solid gainsboro;
+				margin-bottom: 5%;
+				padding: 2%;
+				width: 80%;
+				font-size: 16px;
+				border-radius: 5px;
+			}
+			.code{
+				width: 40%;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>景区预约后台管理系统</h2>
+		<div class="form">
+			<div class="layui-tab">
+				<ul class="layui-tab-title">
+					<li class="layui-this" style="margin-left: 10%;">账号密码登录</li>
+				</ul>
+				<div class="layui-tab-content" style="margin-left: 10%;">
+					<div class="layui-tab-item layui-show">
+						<form action="{:url('Admin/Login/login')}" method="post">
+							<input type="text" name="account" class="account" value="" placeholder="用户名" required="required" /><br>
+							<input type="password" name="pwd" class="pwd" placeholder="密码" required="required" /><br>
+							<input type="submit" value="登录" class="sub" />
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</body>
+	<script src="__STATIC__/layui/layui.js"></script>
+	<script src="__STATIC__/js/jquery-3.4.1.js"></script>
+	<script type="text/javascript">
+		//引入layui element模块
+		layui.use('element', function(){
+		  var element = layui.element;
+		});
+		
+	</script>
+</html>

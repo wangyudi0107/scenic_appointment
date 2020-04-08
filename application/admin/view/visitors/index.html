@@ -1,0 +1,95 @@
+<!-- 连接头部文件 -->
+{include file='public/header'}
+<script src="__STATIC__/js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+<!-- 连接头部文件 -->
+
+<!-- 正文 -->
+<div id="main" style="width: 600px;height:400px;"></div>
+<div>
+	<button type="button" class="layui-btn-sm layui-btn layui-btn-primary" onclick="echarts_data('today')">今日</button>
+	<button type="button" class="layui-btn-sm layui-btn layui-btn-normal" onclick="echarts_data('week')">本周</button>
+	<button type="button" class="layui-btn-sm layui-btn layui-btn-warm" onclick="echarts_data('month')">本月</button>
+	<button type="button" class="layui-btn-sm layui-btn" onclick="echarts_data('year')">今年</button>
+</div>
+<!-- 正文 -->
+<script type="text/javascript">
+	echarts_data('today')
+	
+	function echarts_data(date){
+		$.ajax({
+			type: 'post',
+			url: "{:url('admin/visitors/visitors')}",
+			dataType: 'JSON', //和控制器转换对应
+			data: {
+				date: date,
+			},
+			success: function(data) {
+				if(date=='today'){
+					date='今日';
+				}else if(date=='week'){
+					date='本周';
+				}else if(date=='month'){
+					date='本月';
+				}else{
+					date='今年';
+				}
+				//legend data数据
+				var legend=[];
+				for(var i=0;i<data[0].length;i++){
+					legend.push(data[0][i].address);
+				}
+				//series data数据
+				var series=[];
+				for(var i=0;i<data[1].length;i++){
+					series.push(data[1][i]);
+				}
+				
+				// 初始化echarts实例
+				var myChart = echarts.init(document.getElementById('main'));
+				
+				// 指定图表的配置项和数据
+				var option = {
+					title: {
+						text: '阳明山风景区客流量分布图',
+						subtext: date+'客流量分布',
+						left: 'center'
+					},
+					tooltip: {
+						trigger: 'item',
+						formatter: '{a} <br/>{b} : {c} ({d}%)'
+					},
+					legend: {
+						orient: 'vertical',
+						left: 'left',
+						data: legend
+					},
+					series: [{
+						name: '客流量',
+						type: 'pie',
+						radius: '55%',
+						center: ['50%', '60%'],
+						data: series,
+						emphasis: {
+							itemStyle: {
+								shadowBlur: 10,
+								shadowOffsetX: 0,
+								shadowColor: 'rgba(0, 0, 0, 0.5)'
+							}
+						}
+					}]
+				};
+				
+				// 使用刚指定的配置项和数据显示图表。
+				myChart.setOption(option);
+			},
+			error: function() {
+				layer.msg('错误');
+			}
+		});
+	}
+	
+	
+</script>
+<!-- 连接底部文件 -->
+{include file='public/footer'}
+<!-- 连接底部文件 -->

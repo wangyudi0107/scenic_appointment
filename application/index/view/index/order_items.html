@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>阳明山旅游景区</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link href="__STATIC__/mui/css/mui.css" rel="stylesheet" />
+		<script src="__STATIC__/mui/js/mui.js"></script>
+		<script src="__STATIC__/js/jquery-3.4.1.js"></script>
+	</head>
+
+	<body>
+
+		<style>
+			.mui-control-content {
+				background-color: transparent;
+				min-height: 215px;
+			}
+
+			.mui-control-content .mui-loading {
+				margin-top: 50px;
+			}
+		</style>
+		<header class="mui-bar mui-bar-nav">
+			<a onclick="history.go(-1)"><i class="mui-icon mui-icon-back"></i></a>
+			<h1 class="mui-title">查看订单</h1>
+		</header>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider">
+				<div id="sliderSegmentedControl" class="mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+					<a class="mui-control-item" href="#item1">
+						全部 <span class="mui-badge mui-badge-inverted">{$all_num}</span>
+					</a>
+					<a class="mui-control-item" href="#item2">
+						待使用 <span class="mui-badge mui-badge-primary  mui-badge-inverted">{$unfinished}</span>
+					</a>
+
+				</div>
+				<div id="sliderProgressBar" class="mui-slider-progress-bar mui-col-xs-6"></div>
+				<div class="mui-slider-group">
+					<div id="item1" class="mui-slider-item mui-control-content mui-active">
+						{volist name='all' id='a'}
+						<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" style="margin: 5px;">
+							<span onclick="order({$a.id})">
+							<li class="mui-table-view-cell">
+								<h4 class=" mui-badge-inverted">
+									{$a.scenic}
+								</h4>
+							</li>
+							<li class="mui-table-view-cell">
+								<label>使用时间：</label>
+								{$a.show_time|date='Y-m-d',###} {$a.show_time|date='H:m',###}-{$a.end_time|date='H:m',###}
+							</li>
+							<li class="mui-table-view-cell">
+								<label>数量：</label>
+								{$a.num}
+								<span style="float: right;">
+									<label>总价：</label>
+									<span class=" mui-badge-inverted">
+										￥{$a.price}
+									</span>
+								</span>
+							</li>
+							<li class="mui-table-view-cell">
+								<label>订单状态：</label>
+								{if condition="$a.status==1"}
+								<span style="color: deepskyblue;">未取票</span>
+								{elseif condition="$a.status==2"}
+								<span style="color: #009688;">已取票</span>
+								{else}
+								<span style="color: red;">已退票</span>
+								{/if}
+							</li>
+							</span>
+						</ul>
+						{/volist}
+					</div>
+					<div id="item2" class="mui-slider-item mui-control-content">
+
+						{volist name='all' id='a'}
+						{if condition="$a.status==1"}
+						<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" style="margin: 5px;">
+							<span onclick="order({$a.id})">
+								<div class="mui-slider-cell">
+									<div class="oa-contact-cell mui-table">
+										<li class="mui-table-view-cell">
+											<h4 class=" mui-badge-inverted">
+												{$a.scenic}
+											</h4>
+										</li>
+										<li class="mui-table-view-cell">
+											<label>使用时间：</label>
+											{$a.show_time|date='Y-m-d',###} {$a.show_time|date='H:m',###}-{$a.end_time|date='H:m',###}
+										</li>
+										<li class="mui-table-view-cell">
+											<label>数量：</label>
+											{$a.num}
+											<span style="float: right;">
+												<label>总价：</label>
+												<span class=" mui-badge-inverted">
+													￥{$a.price}
+												</span>
+											</span>
+										</li>
+										<li class="mui-table-view-cell">
+											<label>订单状态：</label>
+											{if condition="$a.status==1"}
+											<span style="color: deepskyblue;">未取票</span>
+											{elseif condition="$a.status==2"}
+											<span style="color: #009688;">已取票</span>
+											{else}
+											<span style="color: red;">已退票</span>
+											{/if}
+										</li>
+									</div>
+								</div>
+							</span>
+						</ul>
+						{/if}
+						{/volist}
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			mui.init({
+				swipeBack: false
+			});
+			(function($) {
+				$('.mui-scroll-wrapper').scroll({
+					indicators: true //是否显示滚动条
+				});
+			});
+			var sliderSegmentedControl = document.getElementById('sliderSegmentedControl');
+			$('.mui-input-group').on('change', 'input', function() {
+				if (this.checked) {
+					sliderSegmentedControl.className =
+						'mui-slider-indicator mui-segmented-control mui-segmented-control-inverted mui-segmented-control-' + this.value;
+					//force repaint
+					sliderProgressBar.setAttribute('style', sliderProgressBar.getAttribute('style'));
+				}
+			});
+			(mui);
+			
+			function order(id){
+				location.href="{:url('index/index/order')}?id="+id;
+			}
+		</script>
+
+	</body>
+
+</html>

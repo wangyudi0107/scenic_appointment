@@ -1,0 +1,162 @@
+<!-- 连接头部文件 -->
+{include file='public/header'}
+<!-- 连接头部文件 -->
+
+<button class="layui-btn layui-btn-normal" onclick="history.go(-1)">返回</button>
+
+<!-- 正文 -->
+<div style="padding: 20px; background-color: #F2F2F2;">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md12">
+			<div class="layui-card">
+				<div class="layui-card-header">订单号：{$info.order}</div>
+				<div class="layui-card-body">
+					<!-- 内容 -->
+					购票信息：
+					<br>
+					<div class="layui-inline">
+						<label class="layui-form-label">预留姓名:</label>
+						<div class="layui-input-inline">
+							<label class="layui-form-label">{$info.appoint_cardID}</label>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">预留手机号:</label>
+						<div class="layui-inline">
+							<label class="layui-form-label">{$info.appoint_phone}</label>
+						</div>
+					</div>
+					<br>
+					<div class="layui-inline">
+						<label class="layui-form-label">景点名称:</label>
+						<div class="layui-inline">
+							<label class="layui-form-label">{$scenic.address}</label>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">场次信息:</label>
+						<div class="layui-input-inline" >
+							<label class="layui-form-label"style="width: 155px;">{$show.show_time|date='Y-m-d',###} <span style="color: #009E94;"> {$show.show_time|date='H:i',###}-{$show.end_time|date='H:i',###}</span></label>
+						</div>
+					</div>
+					<br>
+					<div class="layui-inline">
+						<label class="layui-form-label">购买数量:</label>
+						<div class="layui-inline">
+							<label class="layui-form-label" >{$info.num} 张</label>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">实付金额:</label>
+						<div class="layui-input-inline">
+							<label class="layui-form-label">{$info.price} 元</label>
+						</div>
+					</div>
+					<br>
+					<div class="layui-inline">
+						<label class="layui-form-label">购票时间:</label>
+						<div class="layui-input-inline">
+							<label class="layui-form-label"style="width: 135px;">{$info.date|date='Y-m-d H:m:s',###}</label>
+						</div>
+					</div>
+					<form class="layui-form">
+					<div class="layui-inline">
+						<label class="layui-form-label">订单状态:</label>
+						<div class="layui-input-inline">
+							<select name="status" style="width: 135px;" onchange="status()" id="status" class="layui-input">
+							  <option value="1" {if condition="$info.status==1"}selected="selected"{/if}>未取票</option>
+							  <option value="2" {if condition="$info.status==2"}selected="selected"{/if}>已取票</option>
+							  <option value="3" {if condition="$info.status==3"}selected="selected"{/if}>已退票</option>
+							</select>
+						</div>
+						<!-- <button class="layui-btn layui-btn-sto" id="btnSave" lay-filter="btnSave" lay-submit>保存</button> -->
+					</div>
+					</form>
+					<hr >
+					{volist name='$info.name' id='n'}
+					购票人{$key+1}:
+					<br>
+					<div class="layui-inline">
+						
+						<label class="layui-form-label">姓名:</label>
+						<div class="layui-inline">
+							<label class="layui-form-label">{$n}</label>
+						</div>
+					</div>
+					<div class="layui-inline">
+						<label class="layui-form-label">身份证号:</label>
+						<div class="layui-input-inline">
+							<label class="layui-form-label">{$info.cardID[$key]}</label>
+						</div>
+					</div>
+					<div class="layui-inline" style="margin-left: 20px;">
+						<label class="layui-form-label">体温:</label>
+						<div class="layui-input-inline">
+							<label class="layui-form-label" style="width: 30px;">
+							{if condition="$info.tiwen[$key]==1"}
+								<span style="color: #009688;">正常</span>
+							{else}
+								<span style="color: red;">异常</span>
+							{/if}
+							</label>
+						</div>
+					</div>
+					<br>
+					{/volist}
+					
+					<!-- 内容 -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 正文 -->
+<script type="text/javascript">
+	
+	layui.use(['form', 'jquery'], function(){
+		var form = layui.form
+		form.on('select', function (data) {
+			layer.msg('确定更改这条订单状态么？', {
+				time: 0 //不自动关闭
+				,btn: ['是的', '取消']
+				,yes: function(index){
+					layer.close(index);//关闭当前窗口
+					var status = $("#status").val();
+					$.ajax({
+						type: 'post',
+						url: "{:url('admin/order/order_status')}",
+						dataType: 'JSON', //和控制器转换对应
+						data: {
+							status: status,
+							id: {$info.id},
+						},
+						success: function(data) {
+							layer.msg(data.msg);
+							location.reload();
+						},
+					});
+				},
+				end:function(){
+					{if condition="$info.status==1"}
+						var status = '未取票';
+					{elseif condition="$info.status==2"}
+						var status = '已取票';
+					{else}
+						var status = '已退票';
+					{/if}
+					$("#status").val({$info.status});
+					$('.layui-unselect').eq(1).val(status);
+				}
+			});
+		});
+	});
+	
+	// function status(){
+	// 	var a=form.val('status');
+	// 	var status = $('#status').val();
+	// 	console.log(a);
+	// }
+</script>
+<!-- 连接底部文件 -->
+{include file='public/footer'}
+<!-- 连接底部文件 -->

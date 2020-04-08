@@ -1,0 +1,166 @@
+<!-- 连接头部文件 -->
+{include file='public/header'}
+<!-- 连接头部文件 -->
+
+<!-- 正文 -->
+<!-- 表头搜索开始 -->
+<form class="layui-form" action="{:url('admin/index/show_info')}" method="get">
+	<div class="layui-form-item">
+		<div class="layui-input-block" style="margin-left: 0;background-color: #F6F6F6;padding: 3px;">
+			<div class="layui-input-inline">
+				<input type="text" name="show_time" id="show_time" autocomplete="off" placeholder="演出日期日期" class="layui-input">
+			</div>
+			<div class="layui-input-inline">
+				<select name="scenic_id" lay-search="">
+					<option value="">选择景点</option>
+					{volist name='scenic' id='sc'}
+					<option value="{$sc.id}">{$sc.address}</option>
+					{/volist}
+				</select>
+			</div>
+
+			<div class="layui-input-inline">
+				<select name="status" lay-search="">
+					<option value="">选择/搜索状态</option>
+					<option value="1">待演出</option>
+					<option value="2">已演出</option>
+					<option value="3">已取消</option>
+				</select>
+			</div>
+			<button type="submit" class="layui-btn layui-btn-sm" lay-submit="" lay-filter="" style="margin-top: 3px;"><i class="layui-icon layui-icon-ok"
+				 style="margin-right: 0;"></i></button>
+			<a href="{:url('admin/index/show_info')}">
+				<button type="button" class="layui-btn layui-btn-sm layui-btn-warm" style="margin-top: 3px;"><i class="layui-icon layui-icon-refresh"
+					 style="margin-right: 0;"></i></button>
+			</a>
+			<a href="{:url('admin/index/show_info_change')}">
+				<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" style="margin-top: 3px;">
+					<i class="layui-icon layui-icon-addition"></i>
+				</button>
+			</a>
+		</div>
+	</div>
+</form>
+<!-- 表头搜索结束 -->
+
+<table class="layui-table">
+	<colgroup>
+		<col width="50">
+		<col width="200">
+		<col width="">
+		<col width="50">
+		<col width="50">
+		<col width="150">
+		<col width="150">
+	</colgroup>
+	<thead>
+		<tr>
+			<th>
+				<div class="layui-table-cell content">ID</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">景区名称</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">演出时间</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">票价</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">票数</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">演出状态</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">操作</div>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		{volist name="show" id="s"}
+		<tr height="50px">
+			<th>
+				<div class="layui-table-cell content">{$s.id}</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">{$s.scenic}</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">{$s.show_time|date='Y-m-d',###} <span style="color: #009E94;">
+						{$s.show_time|date='H:i',###}-{$s.end_time|date='H:i',###}</span></div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">{$s.price}</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">{$s.ticket_num}</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">
+					{if condition="$s.status==1"}<span style="color: lightseagreen;">待开始</span>
+					{elseif condition="$s.status==2"}<span style="color:  #40AFFE;">已超时</span>
+					{else}<span style="color: red;">已取消</span>
+					{/if}
+				</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">
+					<a href="{:url('admin/index/show_info_change')}?id={$s.id}">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-danger">
+							<i class="layui-icon"></i>
+						</button>
+					</a>
+					<button type="button" class="layui-btn-sm layui-btn" style="margin-left: 5%;" onclick="show_delete({$s.id})">
+						<i class="layui-icon"></i>
+					</button>
+				</div>
+			</th>
+		</tr>
+	</tbody>
+	{/volist}
+</table>
+<p>{$page}</p>
+<!-- 正文 -->
+<script type="text/javascript">
+	layui.use('laydate', function() {
+		var laydate = layui.laydate;
+		//时间范围
+		laydate.render({
+			elem: '#show_time'
+		});
+	});
+
+	function show_delete(id) {
+		layer.msg('确定删除这条演出信息么？', {
+			time: 0 //不自动关闭
+				,
+			btn: ['是的', '取消'],
+			yes: function(index) {
+				layer.close(index); //关闭当前窗口
+				$.ajax({
+					type: 'post',
+					url: "{:url('admin/index/show_del')}",
+					dataType: 'JSON', //和控制器转换对应
+					data: {
+						id: id,
+					},
+					success: function(data) {
+						layer.msg('删除成功');
+						setTimeout(function() {
+							location.reload();
+						}, 2000);
+					},
+					error: function() {
+						layer.msg('删除失败');
+					}
+				});
+			}
+		});
+
+	}
+</script>
+<!-- 连接底部文件 -->
+{include file='public/footer'}
+<!-- 连接底部文件 -->

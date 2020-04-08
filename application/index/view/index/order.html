@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>阳明山旅游景区</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="__STATIC__/mui/css/mui.css" rel="stylesheet" />
+		<script src="__STATIC__/mui/js/mui.js"></script>
+		<script src="__STATIC__/js/jquery-3.4.1.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+
+			.title {
+				margin: 20px 15px 10px;
+				color: #6d6d72;
+				font-size: 15px;
+			}
+
+			.mui-bar .mui-pull-left .mui-icon {
+				padding-right: 5px;
+				font-size: 28px;
+			}
+
+			.mui-bar .mui-btn {
+				font-weight: normal;
+				font-size: 17px;
+			}
+
+			.mui-bar .mui-btn-link {
+				top: 1px;
+			}
+
+			.mui-content img {
+				width: 100%;
+			}
+
+			.hm-description {
+				margin: .5em 0 2em;
+			}
+
+			.hm-description>li {
+				font-size: 14px;
+				color: #8f8f94;
+			}
+
+			table {
+				width: 100%;
+			}
+			#qrcode{
+				position: fixed;
+				z-index: 999;
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav">
+			{if condition="!empty($status)"}
+				<a href="{:url('index/index/index')}">
+			{else}
+				<a onclick="history.go(-1)">
+			{/if}
+			<i class="mui-icon mui-icon-back"></i></a>
+			<h1 class="mui-title">订单详情</h1>
+		</header>
+		<div class="mui-content">
+			<div id="tabbar" class="mui-control-content mui-active">
+				<div class="title">我的订单</div>
+				<img src="" id="qrcode">
+				{volist name='order_info' id='o'}
+				<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed" style="margin-bottom: 10px;">
+					<li class="mui-table-view-cell">
+						<label>景点</label>
+						<span class="mui-badge mui-badge-inverted">
+							{$o.scenic}
+						</span>
+					</li>
+					<li class="mui-table-view-cell">
+						<label>游览时间</label>
+						<span class="mui-badge mui-badge-inverted">
+							{$o.show_time|date='Y-m-d',###}:{$o.show_time|date='H:i',###}-{$o.end_time|date='H:i',###}
+						</span>
+					</li>
+					<li class="mui-table-view-cell">
+						<label>购票数量</label>
+						<span class="mui-badge mui-badge-inverted">
+							{$o.num}
+						</span>
+					</li>
+					<li class="mui-table-view-cell">
+						<label>支付金额</label>
+						<span class="mui-badge mui-badge-inverted">
+							{$o.price}元
+						</span>
+					</li>
+					<li class="mui-table-view-cell">
+						<table border="0" cellspacing="1" cellpadding="1">
+							购票人信息：
+							<colgroup>
+								<col width="60">
+								<col width="">
+								<col width="">
+							</colgroup>
+							<tr>
+								<td>姓名</td>
+								<td>身份证号</td>
+								<td>体温</td>
+							</tr>
+							{$o.buyer}
+						</table>
+					</li>
+					<li class="mui-table-view-cell">
+						{if condition="$o.status==1"}
+						<span style="color: deepskyblue;">未取票</span>
+						<span class="mui-badge mui-badge-inverted">
+							<a onclick="code('{$o.qrcode}')">二维码</a>
+						</span>
+						{elseif condition="$o.status==2"}
+						<span style="color: #009688;">已取票</span>
+						{else}
+						<span style="color: red;">已退票</span>
+						{/if}
+						
+					</li>
+				</ul>
+				{/volist}
+			
+			</div>
+		</div>
+	</body>
+	<script>
+		mui.init({
+			swipeBack: true //启用右滑关闭功能
+		});
+		function code(src){
+			$('#qrcode').attr('src',src);
+			document.getElementById("qrcode").style.display="block";
+		}
+		document.onmousedown=function(){
+			document.getElementById("qrcode").style.display="none";
+		}
+	</script>
+</html>

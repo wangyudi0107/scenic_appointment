@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>阳明山旅游景区</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="__STATIC__/mui/css/mui.css" rel="stylesheet" />
+		<script src="__STATIC__/mui/js/mui.js"></script>
+		<script src="__STATIC__/js/jquery-3.4.1.js"></script>
+		<link rel="stylesheet" href="__STATIC__/layui/css/layui.css" media="all">
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</head>
+	<style>
+		.title {
+			margin: 20px 15px 10px;
+			color: #6d6d72;
+			font-size: 15px;
+		}
+
+		.oa-contact-cell.mui-table .mui-table-cell {
+			padding: 11px 0;
+			vertical-align: middle;
+		}
+
+		.oa-contact-cell {
+			position: relative;
+			margin: -11px 0;
+		}
+
+		.oa-contact-avatar {
+			width: 75px;
+		}
+
+		.oa-contact-avatar img {
+			border-radius: 50%;
+		}
+
+		.oa-contact-content {
+			width: 100%;
+		}
+
+		.oa-contact-name {
+			margin-right: 20px;
+		}
+
+		.oa-contact-name,
+		oa-contact-position {
+			float: left;
+		}
+	</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<!-- <a ><i class="mui-icon mui-icon-back"></i></a> -->
+			<h1 class="mui-title">阳明山旅游景区</h1>
+		</header>
+		<nav class="mui-bar mui-bar-tab">
+			<a class="mui-tab-item mui-active" href="#tabbar">
+				<span class="mui-icon mui-icon-home"></span>
+				<span class="mui-tab-label">首页</span>
+			</a>
+			<a class="mui-tab-item" href="#tabbar-with-contact">
+				<span class="mui-icon mui-icon-person-filled"></span>
+				<span class="mui-tab-label">我的订单</span>
+			</a>
+		</nav>
+		<div class="mui-content">
+			<div id="tabbar" class="mui-control-content mui-active">
+				<div class="title">阳明山旅游景区景点门票</div>
+				<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed">
+					{volist name="intro" id="in"}
+					<li class="mui-table-view-cell">
+						<a href="{:url('index/index/show_item')}?scenicID={$in.id}">
+							<div class="mui-slider-cell">
+								<div class="oa-contact-cell mui-table">
+									<div class="oa-contact-avatar mui-table-cell">
+										<img src="{$in.src}" width="60px" height="60px">
+									</div>
+									<div class="oa-contact-content mui-table-cell">
+										<div class="mui-clearfix">
+											<h4 class="oa-contact-name">{$in.address}</h4>
+											<span class="oa-contact-position mui-h6">{$in.duration}分钟</span>
+										</div>
+										<p class="oa-contact-email mui-h6">
+											{$in.intro}
+										</p>
+									</div>
+								</div>
+							</div>
+						</a>
+					</li>
+					{/volist}
+				</ul>
+			</div>
+			<!-- **************************************************************** -->
+			<div id="tabbar-with-contact" class="mui-control-content">
+				<div class="title">请输入您的订单信息进行查询</div>
+				<form class="mui-input-group">
+					<div class="mui-input-row">
+						<label>姓名</label>
+						<input type="text" class="mui-input-clear" placeholder="预留姓名" id="cardID">
+					</div>
+					<div class="mui-input-row">
+						<label>手机号</label>
+						<input type="number" class="mui-input-clear" placeholder="预留手机号" id="phone">
+					</div>
+					<div class="mui-button-row">
+						<button type="button" class="mui-btn mui-btn-primary" onclick="sub()">确认</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</body>
+	<script>
+		mui.init({
+			swipeBack: true //启用右滑关闭功能
+		});
+
+		function sub() {
+			// 验证身份证
+			// var Verify_cardID = /^[1-9]\d{5}(19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+			// 验证手机号
+			var Verify_phone = /^[1][3,4,5,7,8][0-9]{9}$/;
+			var cardID = $("#cardID").val(),
+				phone = $("#phone").val();
+			if (cardID == '' || phone == '') {
+				mui.toast('请输入完整查询信息');
+			} else {
+				if (Verify_phone.test(phone) && cardID!='') {
+					$.ajax({
+						type: 'post',
+						url: "{:url('index/index/order_v')}",
+						dataType: 'JSON', //和控制器转换对应
+						data: {
+							cardID: cardID,
+							phone: phone,
+						},
+						success: function(data) {
+							if(data.status==1){
+								mui.toast('验证成功');
+								setTimeout(function() {
+									location.href = "{:url('index/index/order_items')}?cardID=" + cardID + "&phone=" + phone;
+								}, 1000);
+							}else{
+								mui.toast('验证失败，请重试');
+							}
+						},
+					});
+				} else {
+					mui.toast('信息格式不正确');
+				}
+			}
+
+		}
+	</script>
+
+</html>

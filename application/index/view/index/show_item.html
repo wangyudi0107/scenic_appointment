@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>阳明山旅游景区</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="__STATIC__/mui/css/mui.css" rel="stylesheet" />
+		<script src="__STATIC__/mui/js/mui.js"></script>
+		<script src="__STATIC__/js/jquery-3.4.1.js"></script>
+		<link rel="stylesheet" href="__STATIC__/layui/css/layui.css" media="all">
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a href="{:url('index/index/index')}"><i class="mui-icon mui-icon-back"></i></a>
+			<h1 class="mui-title">{$in.address}景点门票</h1>
+		</header>
+		<div class="mui-content">
+			<div style="padding: 10px 10px;">
+				<div id="segmentedControl" class="mui-segmented-control">
+					{volist name='show' id='s'}
+						<a class="mui-control-item{if condition='$key==0'} mui-active{/if}" href="#item{$key}">
+							{$s.data}
+						</a>
+					{/volist}
+				</div>
+			</div>
+				{volist name='show' id='show'}
+					<div id="item{$key}" class="mui-control-content {if condition='$key==0'} mui-active{/if}">
+						<ul class="mui-table-view">
+						{if condition='empty($show.info)'}
+							<li class="mui-table-view-cell" style="border-bottom: 1px ghostwhite;">当天暂无场次</li>
+						{else}
+							{volist name='$show["info"]' id='info'}
+								<li class="mui-table-view-cell">
+									{if condition='$info.ticket_num>0 && $info.show_time>time() && $info.status==1'}
+									<a href="{:url('index/index/buyit')}?id={$in.id}&showid={$info.id}">
+									{/if}
+									{$info.show_time|date='H:i',###}-{$info.end_time|date='H:i',###}
+									{if condition="$info.status==3"}
+										<span class="mui-badge">场次取消</span>
+									{elseif condition="$info.show_time<time()"}
+										<span class="mui-badge">场次已过</span>
+									{else}
+										{if condition='$info.show_time<time()'}
+											<span class="mui-badge">无法购买</span>
+										{else}
+											{if condition='$info.ticket_num>=30'}
+												<span class="mui-badge mui-badge-primary">
+											{elseif condition='$info.ticket_num<=30 && $info.ticket_num>0'}
+												<span class="mui-badge mui-badge-danger">
+											{elseif condition='$info.ticket_num<=0'}
+												<span class="mui-badge">
+											{/if}
+											剩余：{$info.ticket_num}张</span>
+											</a>
+										{/if}
+									{/if}
+								</li>
+							{/volist}
+						{/if}
+						</ul>
+					</div>
+				{/volist}
+			</div>
+		</div>
+	</body>
+	<script>
+		mui.init({
+			swipeBack: true //启用右滑关闭功能
+		});
+		(function($) {
+			$('#scroll').scroll({
+				indicators: true //是否显示滚动条
+			});
+			var segmentedControl = document.getElementById('segmentedControl');
+			$('.mui-input-group').on('change', 'input', function() {
+				if (this.checked) {
+					var styleEl = document.querySelector('input[name="style"]:checked');
+					var colorEl = document.querySelector('input[name="color"]:checked');
+					if (styleEl && colorEl) {
+						var style = styleEl.value;
+						var color = colorEl.value;
+						segmentedControl.className = 'mui-segmented-control' + (style ? (' mui-segmented-control-' + style) : '') +
+							' mui-segmented-control-' + color;
+					}
+				}
+			});
+		})(mui);
+	</script>
+</html>

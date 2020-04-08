@@ -1,0 +1,75 @@
+<!-- 连接头部文件 -->
+{include file='public/header'}
+<!-- 连接头部文件 -->
+
+<!-- 正文 -->
+<div style="padding: 20px; background-color: #F2F2F2;">
+	<div class="layui-row layui-col-space15">
+		<div class="layui-col-md12">
+			<div class="layui-card">
+				<div class="layui-card-header">预购设置</div>
+				<div class="layui-card-body">
+					<div class="layui-form-item">
+						<label class="layui-form-label">购票数量</label>
+						<div class="layui-input-inline">
+							<input type="number" name="ticket_num" id="ticket_num" required lay-verify="required" autocomplete="off" class="layui-input"
+							 value="{$set.ticket_num}">
+						</div>
+						<div class="layui-form-mid layui-word-aux">*</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">可预约天数</label>
+						<div class="layui-input-inline">
+							<input type="number" name="day" id="day" required lay-verify="required" autocomplete="off" class="layui-input"
+							 value="{$set.day}">
+						</div>
+						<div class="layui-form-mid layui-word-aux">*</div>
+					</div>
+					<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" style="margin-left: 130px;" onclick="set()">保存设置</button>
+					<button type="button" class="layui-btn layui-btn-sm">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 正文 -->
+<script type="text/javascript">
+	window.onload=function(){
+		layer.alert('该功能已废弃', function(){
+			//关闭后的操作
+			history.go(-1);
+		});
+	}
+	
+	function set() {
+		var num = $('#ticket_num').val();
+		var day = $('#day').val();
+
+		layer.msg('确定更改预约设置么？', {
+			time: 0 //不自动关闭
+				,
+			btn: ['是的', '取消'],
+			yes: function(index) {
+				layer.close(index); //关闭当前窗口
+				$.ajax({
+					type: 'post',
+					url: "{:url('admin/setting/set')}",
+					dataType: 'JSON', //和控制器转换对应
+					data: {
+						ticket_num: num,
+						day: day,
+					},
+					success: function(data) {
+						layer.msg(data.msg);
+					},
+					error: function() {
+						layer.msg('错误');
+					}
+				});
+			}
+		});
+	}
+</script>
+<!-- 连接底部文件 -->
+{include file='public/footer'}
+<!-- 连接底部文件 -->

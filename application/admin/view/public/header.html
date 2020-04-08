@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>景区预约后台管理系统</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="format-detection" content="telephone=no">
+
+		<script src="__STATIC__/layui/layui.js" charset="utf-8"></script>
+		<script src="__STATIC__/js/public.js" type="text/javascript" charset="utf-8"></script>
+		<script src="__STATIC__/js/jquery-3.4.1.js" type="text/javascript" charset="utf-8"></script>
+
+		<link rel="stylesheet" href="__STATIC__/css/public.css" media="all">
+		<link rel="stylesheet" href="__STATIC__/layui/css/layui.css" media="all">
+	</head>
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header">
+				<div class="layui-logo">景区预约后台管理系统</div>
+				<!-- 头部区域（可配合layui已有的水平导航） -->
+				<ul class="layui-nav layui-layout-right">
+					<li class="layui-nav-item">
+						<a href="javascript:;"style="color: lightskyblue;">
+							{$Request.session.name}
+						</a>
+						<dl class="layui-nav-child">
+							<dd><a onclick="lin_out()" >退出</a></dd>
+						</dl>
+					</li>
+				</ul>
+			</div>
+			<script>
+				function lin_out() {
+					$.ajax({
+						type: "post",
+						url: "{:url('admin/login/lin_out')}",
+						dataType: 'JSON',
+						data: {
+						},
+						success: function(data) {
+							console.log(data.status)
+							if(data.status == 1){
+								layer.msg(data.msg); 
+								setTimeout(function(){location.href = "{:url('admin/login/index')}";},2000);
+							}
+						},
+						error: function(e) {
+							console.log('erro');
+						}
+
+					})
+				}
+			</script>
+			<div class="layui-side layui-bg-black">
+				<div class="layui-side-scroll">
+					<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+					<ul class="layui-nav layui-nav-tree" lay-filter="test">
+						<li class="layui-nav-item ">
+							<a class="" href="javascript:;">景区景点管理</a>
+							<dl class="layui-nav-child">
+								<dd><a href="{:url('admin/index/index')}">景区景点信息</a></dd>
+								<dd><a href="{:url('admin/index/show_info')}">景点场次信息</a></dd>
+							</dl>
+						</li>
+						<li class="layui-nav-item">
+							<a class="" href="javascript:;">订单信息</a>
+							<dl class="layui-nav-child">
+								<dd><a href="{:url('admin/order/index')}">全部订单</a></dd>
+							</dl>
+						</li>
+						<li class="layui-nav-item"><a href="{:url('admin/setting/index')}">预购设定</a> </li>
+						<li class="layui-nav-item"><a href="{:url('admin/visitors/index')}">游客记录</a> </li>
+					</ul>
+				</div>
+			</div>
+			<script type="text/javascript">
+				var li = $('.layui-nav-tree:eq(0)>li:eq({$index.first})')[0];
+				li.className = 'layui-nav-item layui-nav-itemed'; 
+				{if condition = '!empty($index.second)'}
+					var dd = $('.layui-nav-tree:eq(0)>li:eq({$index.first})>dl>dd:eq({$index.second})')[0];
+					dd.className = 'layui-this'; 
+				{/if}
+			</script>
+			<div class="layui-body" style="overflow-x: scroll;">
+				<!-- 内容主体区域 -->
+				<div style="padding: 15px;">

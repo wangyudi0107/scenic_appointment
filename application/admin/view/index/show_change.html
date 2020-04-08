@@ -1,0 +1,78 @@
+<!-- 连接头部文件 -->
+{include file='public/header'}
+<!-- 连接头部文件 -->
+
+<!-- 正文 -->
+
+<button class="layui-btn layui-btn-normal" onclick="history.go(-1)">返回</button>
+
+<form action="{:url('admin/index/show_insert')}" method="post" style="margin-top: 15px;" class="layui-form layui-form-pane">
+
+	{if condition='!empty($intro.id)' } <input type="hidden" name="id" id="id" value='{$intro.id}' /> {/if}
+	
+	 <div class="layui-form-item">
+	    <label class="layui-form-label">景点</label>
+	    <div class="layui-input-inline">
+	      <select name="scenic">
+	        <option value="">请选择景点</option>
+	        {volist name='scenic' id='sc'}
+	        <option value="{$sc.id}" {if condition="!empty($intro.id)&&$intro.scenic_id==$sc.id"} selected="selected" {/if}>{$sc.address}</option>
+	        {/volist}
+	      </select>
+	    </div>
+	</div>
+		
+	<div class="layui-form-item" style="margin-bottom: 15px;">
+		<label class="layui-form-label">演出日期：</label>
+		<div class="layui-input-inline">
+			<input type="date" name="date" required lay-verify="required" placeholder="YY-MM-DD" autocomplete="off" class="layui-input price_form" {if condition="!empty($intro.date)" } value="{$intro.date}" {/if} />
+		</div>
+	</div>
+	
+	<div class="layui-form-item">
+		<div class="layui-inline">
+		<label class="layui-form-label">演出时间：</label>
+		<div class="layui-input-inline" style="width: 100px;">
+			<input type="time" name="show_time" required lay-verify="required" placeholder="开始时间" autocomplete="off" class="layui-input price_form" {if condition="!empty($intro.show_time)" } value="{$intro.show_time}"{else}value="09:00" {/if} />
+		</div>
+		<div class="layui-form-mid">-</div>
+		<div class="layui-input-inline" style="width: 100px;">
+		<input type="time" name="end_time" required lay-verify="required" placeholder="开始时间" autocomplete="off" class="layui-input price_form" {if condition="!empty($intro.end_time)" } value="{$intro.end_time}"{else}value="10:00" {/if} />
+		</div>
+		</div>
+	</div>
+	
+	<div class="layui-form-item" style="margin-bottom: 15px;">
+		<label class="layui-form-label">票价(元)：</label>
+		<div class="layui-input-inline" style="width: 80px;">
+			<input type="text" name="price" required lay-verify="required" placeholder="￥" autocomplete="off" class="layui-input price_form" {if condition="!empty($intro.price)" } value="{$intro.price}" {/if} />
+		</div>
+	</div>
+	
+	<div class="layui-form-item" style="margin-bottom: 15px;">
+		<label class="layui-form-label">票数：</label>
+		<div class="layui-input-inline" style="width: 80px;">
+			<input type="text" name="ticket_num" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input price_form" {if condition="!empty($intro.ticket_num)" } value="{$intro.ticket_num}" {/if} />
+		</div>
+	</div>
+	
+	<div class="layui-form-item">
+	    <label class="layui-form-label">演出状态</label>
+	    <div class="layui-input-inline">
+	      <select name="status">
+	        <option value="">请选择件演出状态</option>
+	        <option value="1" {if condition="!empty($intro.id)&&$intro.status==1"} selected="selected" {/if}>待开始</option>
+	       <option value="2" {if condition="!empty($intro.id)&&$intro.status==2"} selected="selected" {/if}>已超时</option>
+		   <option value="3" {if condition="!empty($intro.id)&&$intro.status==3"} selected="selected" {/if}>已取消</option>
+	      </select>
+	    </div>
+	</div>
+	
+	<input type="submit" value="提交信息" class="layui-btn " />
+</form>
+
+<!-- 正文 -->
+
+<!-- 连接底部文件 -->
+{include file='public/footer'}
+<!-- 连接底部文件 -->

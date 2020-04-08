@@ -1,0 +1,131 @@
+<!-- 连接头部文件 -->
+{include file='public/header'}
+<!-- 连接头部文件 -->
+
+<!-- 正文 -->
+<!-- 表头搜索开始 -->
+<form class="layui-form" action="{:url('admin/order/index')}" method="get">
+	<div class="layui-form-item">
+		<div class="layui-input-block" style="margin-left: 0;background-color: #F6F6F6;padding: 3px;">
+			<div class="layui-input-inline">
+				<input type="text" name="name" id="name" autocomplete="off" placeholder="购票人相关信息" class="layui-input">
+			</div>
+			<div class="layui-input-inline">
+				<select name="scenic_id" lay-search="">
+					<option value="">选择景点</option>
+					{volist name='scenic' id='sc'}
+					<option value="{$sc.id}">{$sc.address}</option>
+					{/volist}
+				</select>
+			</div>
+
+			<div class="layui-input-inline">
+				<select name="status" lay-search="">
+					<option value="">选择/搜索状态</option>
+					<option value="1">未取票</option>
+					<option value="2">已取票</option>
+					<option value="3">已退票</option>
+				</select>
+			</div>
+			<button type="submit" class="layui-btn layui-btn-sm" lay-submit="" lay-filter="" style="margin-top: 3px;"><i class="layui-icon layui-icon-ok"style="margin-right: 0;"></i></button>
+			<a href="{:url('admin/order/index')}">
+				<button type="button" class="layui-btn layui-btn-sm layui-btn-warm" style="margin-top: 3px;"><i class="layui-icon layui-icon-refresh" style="margin-right: 0;"></i></button>
+			</a>
+		</div>
+	</div>
+</form>
+<!-- 表头搜索结束 -->
+
+<table class="layui-table">
+	<colgroup>
+		<col width="50">
+		<col width="250">
+		<col width="200">
+		<col width="">
+		<col width="50">
+		<col width="150">
+		<col width="150">
+	</colgroup>
+	<thead>
+		<tr>
+			<th>
+				<div class="layui-table-cell content">ID</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">订单号</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">购票人</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">购票人身份证号</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">购票人体温</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">订单状态</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">操作</div>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+	{foreach name="order" id="o" key="key"}
+		{foreach name='$o["name"]' id="n" key="k"}
+		<tr>
+			{if condition="$k==0"}
+			<th rowspan="{$o['name']|count}">
+				<div class="layui-table-cell content">{$o.id}</div>
+			</th>
+			{/if}
+			{if condition="$k==0"}
+			<th rowspan="{$o['name']|count}">
+				<div class="layui-table-cell content">{$o.order}</div>
+			</th>
+			{/if}
+			<th>
+				<div class="layui-table-cell content">{$n}</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">{$o.cardID[$k]}</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">
+				{if condition="$o.tiwen[$k]==1"}
+					<span style="color: #009688;">正常</span>
+				{else}
+					<span style="color: red;">异常</span>
+				{/if}
+				</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">
+					{if condition="$o.status==1"}
+						<span style="color: #009688;">未取票</span>
+					{elseif condition="$o.status==2"}
+						<span style="color: #1E9FFF;">已取票</span>
+					{else}
+						<span style="color: red">已退票</span>
+					{/if}
+				</div>
+			</th>
+			<th>
+				<div class="layui-table-cell content">
+					<a href="{:url('admin/order/details')}?id={$o.id}">查看订单详情</a>
+				</div>
+			</th>
+		</tr>
+		{/foreach}
+	{/foreach}
+	</tbody>
+</table>
+<div>{$page}</div>
+<!-- 正文 -->
+<script type="text/javascript">
+	
+</script>
+<!-- 连接底部文件 -->
+{include file='public/footer'}
+<!-- 连接底部文件 -->

@@ -1,0 +1,133 @@
+<!-- 连接头部文件 -->
+{include file='public/header'}
+<!-- 连接头部文件 -->
+
+<!-- 正文 -->
+
+<button class="layui-btn layui-btn-normal" onclick="history.go(-1)">返回</button>
+
+{if condition='!empty($intro.id)' }
+<button type="button" class="layui-btn layui-btn-danger" onclick="del()">
+	<i class="layui-icon layui-icon-delete"></i>
+</button>
+<script>
+	function del(){
+		layer.msg('确定删除这条景点信息么？', {
+			time: 0 //不自动关闭
+			,btn: ['是的', '取消']
+			,yes: function(index){
+				layer.close(index);//关闭当前窗口
+				$.ajax({
+					type: 'post',
+					url: "{:url('admin/index/scenic_del')}",
+					dataType: 'JSON', //和控制器转换对应
+					data: {
+						id: {$intro.id},
+					},
+					success: function(data) {
+						layer.msg('删除成功');
+						setTimeout(function() {
+							location.href = "{:url('admin/index/index')}";
+						}, 2000);
+					},
+				});
+			}
+		});
+	}
+</script>
+{/if}
+<form action="{:url('admin/index/scenic_insert')}" method="post" style="margin-top: 15px;">
+
+	{if condition='!empty($intro.id)' } <input type="hidden" name="id" id="id" value='{$intro.id}' /> {/if}
+
+	<div class="layui-block layui-form-pane" style="margin-bottom: 15px;width: 500px;">
+		<label class="layui-form-label">景点名称：</label>
+		<div class="layui-input-block">
+			<input type="text" name="address" required lay-verify="required" placeholder="景点名称" autocomplete="off" class="layui-input price_form"
+			 {if condition="!empty($intro.address)" } value="{$intro.address}" {/if} />
+		</div>
+	</div>
+
+	<div class="layui-upload">
+		<div class="layui-inline layui-form-pane" style="margin-bottom: 15px;width: 500px;">
+			<label class="layui-form-label">缩略图片：</label>
+			<div class="layui-input-block">
+				<input type="text" name="src" id="intro" required lay-verify="required" placeholder="请上传图片" autocomplete="off"
+				 class="layui-input" readonly="readonly" {if condition="!empty($intro.src)" } value="{$intro.src}" {/if}/> </div> </div>
+				 <button type="button" class="layui-btn" id="upload_intro" style="margin-bottom: 15px;">上传图片</button>
+				<div class="layui-upload-list">
+					<img class="layui-upload-img" id="demo1" {if condition="!empty($intro.src)" } src="{$intro.src}" {/if} width="166px">
+				</div>
+			</div>
+
+			<div class="layui-block layui-form-pane" style="margin-bottom: 15px;width: 500px;">
+				<label class="layui-form-label">演出时长：</label>
+				<div class="layui-input-block">
+					<input type="text" name="duration" required lay-verify="required" placeholder="演出时长" autocomplete="off" class="layui-input price_form"
+					 {if condition="!empty($intro.duration)" } value="{$intro.duration}" {/if} />
+				</div>
+			</div>
+			<div class="layui-form-item layui-form-pane">
+				<label class="layui-form-label">购票数量</label>
+				<div class="layui-input-inline" style="width: 135px;">
+					<input type="number" name="ticket_num" id="ticket_num" required lay-verify="required" autocomplete="off" class="layui-input"
+					 value="{$intro.ticket_num}">
+				</div>
+				
+				<label class="layui-form-label">可预约天数</label>
+				<div class="layui-input-inline" style="width: 135px;">
+					<input type="number" name="day" id="day" required lay-verify="required" autocomplete="off" class="layui-input"
+					 value="{$intro.day}" >
+				</div>
+				
+			</div>
+			
+			<div class="layui-block layui-form-pane" style="margin-bottom: 15px;width: 500px;">
+				<label class="layui-form-label">景点介绍：</label>
+				<div class="layui-input-block">
+					<input type="text" name="intro" required lay-verify="required" placeholder="景点介绍" autocomplete="off" class="layui-input price_form"
+					 {if condition="!empty($intro.intro)" } value="{$intro.intro}" {/if} />
+				</div>
+			</div>
+
+			<input type="submit" value="提交信息" class="layui-btn " />
+</form>
+<!-- 正文 -->
+<script>
+	window.onload = function(){
+		console.log("{$msg}")
+	};
+	//JavaScript代码区域
+	layui.use('upload', function() {
+		var $ = layui.jquery,
+			upload = layui.upload;
+		//普通图片上传
+		var uploadInst = upload.render({
+			elem: '#upload_intro',
+			url: "{:url('admin/index/intro_upload')}" //上传接口
+				,
+			method: 'post',
+			before: function(obj) {
+				//预读本地文件示例，不支持ie8
+				// obj.preview(function(index, file, result) {
+				// 	$('#demo1').attr('src', result); //图片链接（base64）
+				// });
+				return layer.msg('上传中');
+			},
+			done: function(res) {
+				console.log(res)
+				if (res.code == 1) {
+					$('#intro').val(res.data.src);
+					$('#demo1').attr('src', res.data.src);
+					return layer.msg('上传成功');
+				}
+			},
+			error: function() {
+				console.log(res);
+			}
+		});
+	});
+</script>
+<!-- 连接底部文件 -->
+{include file='public/footer'}
+<!-- 连接底部文件 -->

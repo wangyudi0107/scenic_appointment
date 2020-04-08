@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>阳明山旅游景区</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="__STATIC__/mui/css/mui.css" rel="stylesheet" />
+		<script src="__STATIC__/mui/js/mui.js"></script>
+		<script src="__STATIC__/js/jquery-3.4.1.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+
+			.mui-bar .mui-pull-left .mui-icon {
+				padding-right: 5px;
+				font-size: 28px;
+			}
+
+			.mui-bar .mui-btn {
+				font-weight: normal;
+				font-size: 17px;
+			}
+
+			.mui-bar .mui-btn-link {
+				top: 1px;
+			}
+
+			.mui-content img {
+				width: 100%;
+			}
+
+			.hm-description {
+				margin: .5em 0 2em;
+			}
+
+			.hm-description>li {
+				font-size: 14px;
+				color: #8f8f94;
+			}
+		</style>
+	</head>
+	<body>
+		<header id="header" class="mui-bar mui-bar-transparent">
+			<a href="{:url('index/index/index')}"><i class="mui-icon mui-icon-back"></i></a>
+			<h1 class="mui-title">提交订单</h1>
+		</header>
+		<div class="mui-content">
+			<img id="img1" src="__STATIC__/img/home/yuantiao.jpg" />
+		</div>
+		<div>
+			<div class="mui-content-padded" style="margin: 5px;">
+				<input type="hidden" name="show_id" id="" value="{$show_intro.id}" />
+				<input type="hidden" name="scenic_id" id="" value="{$in.id}" />
+				<p>预购信息:</p>
+				<div class="mui-input-group">
+					<div class="mui-input-row">
+						<label>姓名</label>
+						<input type="text" name="appoint_cardID" class="mui-input-clear" placeholder="预购人姓名">
+					</div>
+					<div class="mui-input-row">
+						<label>手机号</label>
+						<input type="text" name="appoint_phone" class="mui-input-clear" placeholder="预购手机号">
+					</div>
+				</div>
+				<p>购票信息:</p>
+				<div class="mui-input-group">
+					<li class="mui-table-view-cell">
+						<label>景点名称</label>
+						<span class="mui-badge mui-badge-inverted">{$in.address}</span>
+					</li>
+					<li class="mui-table-view-cell">
+						<label>门票价格</label>
+						<span class="mui-badge mui-badge-inverted" id="single_price">{$show_intro.price}元</span>
+					</li>
+					<li class="mui-table-view-cell">
+						<label>游览时间</label>
+						<span class="mui-badge mui-badge-inverted">
+							{$show_intro.show_time|date='Y-m-d',###}:{$show_intro.show_time|date='H:i',###}-{$show_intro.end_time|date='H:i',###}
+						</span>
+					</li>
+					<li class="mui-table-view-cell">
+						<label>数量：</label>
+						<div class="mui-numbox mui-badge" data-numbox-step='1' data-numbox-min='1' data-numbox-max='{$in.ticket_num}'>
+							<!-- "-"按钮，点击可减小当前数值 -->
+							<button class="mui-btn mui-numbox-btn-minus" type="button">-</button>
+							<input class="mui-numbox-input" type="number" id="num" name="num" onchange="change()" />
+							<!-- "+"按钮，点击可增大当前数值 -->
+							<button class="mui-btn mui-numbox-btn-plus" type="button">+</button>
+						</div>
+					</li>
+					<li class="mui-table-view-cell">
+						<label>小计</label>
+						<span class="mui-badge mui-badge-inverted" style="color: coral"><b id="price">{$show_intro.price}元</b></span>
+					</li>
+				</div>
+				<p style="color: black;">购票人信息:</p>
+				<div id="ticket_buyer_info">
+					<div class="mui-input-group" id="buy_info">
+						<p style="padding:5px 11px 0 5px;">购票人1：</p>
+						<div class="mui-input-row">
+							<label>姓名</label>
+							<input type="text" name="name0" class="mui-input-clear" placeholder="姓名">
+						</div>
+						<div class="mui-input-row">
+							<label>身份证号</label>
+							<input type="text" name="cardID0" class="mui-input-clear" placeholder="身份证号">
+						</div>
+						<div style="height: 40px;line-height: 40px;">
+							<label style="padding: 11px 15px;font-size: 14px;">体温正常</label>
+							<p class="mui-badge mui-badge-inverted">
+								<input name="tiwen0" type="radio" value="1" style="margin: 0 5px;">是
+								<input name="tiwen0" type="radio" value="2" style="margin: 0 5px;">否
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<button type="button" class="mui-btn mui-btn-danger mui-btn-block" onclick="sub()">立即购买</button>
+	</body>
+	<script>
+		mui.init({
+			swipeBack: true //启用右滑关闭功能
+		});
+
+		function change() {
+			setTimeout(num, 1);
+		}
+
+		function num() {
+			//获取单价
+			var singl_price = $('#single_price').text();
+			singl_price = parseInt(singl_price);
+			//获取数量
+			var num = $('input[name="num"]').val();
+
+			//计算总价
+			var price = singl_price * num;
+			$('#price').text(price + '元'); //输出总价
+			//输出购票表单
+			var ticket = '';
+			for (var i = 0; i < num; i++) {
+				var buyer = Number(i) + 1;
+				ticket += '<div class="mui-input-group" id="buy_info"><p style="padding:5px 11px 0 5px;">购票人' + buyer +
+					'：</p><div class="mui-input-row"><label>姓名</label><input type="text" name="name' + i +
+					'" class="mui-input-clear" placeholder="姓名"></div><div class="mui-input-row"><label>身份证号</label><input type="text" name="cardID' +
+					i +
+					'" class="mui-input-clear" placeholder="身份证号"></div><div style="height: 40px;line-height: 40px;"><label style="padding: 11px 15px;font-size: 14px;">体温正常</label><p class="mui-badge mui-badge-inverted"><input name="tiwen' +
+					i + '" type="radio" value="1"  style="margin: 0 5px;">是<input name="tiwen' + i +
+					'" type="radio" value="2" style="margin: 0 5px;">否</p></div></div>'
+			}
+			$('#ticket_buyer_info').html(ticket);
+		}
+
+		function sub() {
+			// 验证身份证
+			var Verify_cardID = /^[1-9]\d{5}(19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
+			// 验证手机号
+			var Verify_phone = /^[1][3,4,5,7,8][0-9]{9}$/;
+
+			var appoint_phone = $('input[name="appoint_phone"]').val(),
+				appoint_cardID = $('input[name="appoint_cardID"]').val(),
+				scenic_id = $('input[name="scenic_id"]').val(),
+				show_id = $('input[name="show_id"]').val(),
+				num = $('input[name="num"]').val(),
+				price = $('#price').text();
+			price = parseInt(price);
+
+			var name = '',
+				cardID = '',
+				tiwen = '';
+
+			var t_f; //信心是否完善
+
+			if (Verify_phone.test(appoint_phone) && appoint_cardID != '') {
+				for (var i = 0; i < $('input[name="num"]').val(); i++) {
+					//判断购票姓名是否为空  判断购票身份证是否为空
+					if ($("input[name='name" + i + "']").val() != '' && $("input[name='cardID" + i + "']").val() != '') {
+						//加入姓名数组
+						name += $("input[name='name" + i + "']").val() + ',';
+						//验证身份证号    判断单选框是否点击
+						if (Verify_cardID.test($("input[name='cardID" + i + "']").val()) && $("input[name='tiwen" + i + "']:checked").val() !=
+							undefined) {
+							//加入身份证数组
+							cardID += $("input[name='cardID" + i + "']").val() + ',';
+							// 加入点击数组
+							tiwen += $("input[name='tiwen" + i + "']:checked").val() + ',';
+							t_f = true;
+
+						} else {
+							mui.toast('请输入正确的购票信息');
+							t_f = false;
+						}
+
+					} else {
+						mui.toast('请输入完整信息');
+						t_f = false;
+						break;
+					}
+				}
+			} else {
+				mui.toast('请输入正确身份信息');
+				t_f = false;
+			}
+			if (t_f) {
+				//ajax传参提交订单
+				$.ajax({
+					type: 'post',
+					url: "{:url('index/index/pay')}",
+					dataType: 'JSON', //和控制器转换对应
+					data: {
+						name: name,
+						cardID: cardID,
+						tiwen: tiwen,
+						appoint_phone: appoint_phone,
+						appoint_cardID: appoint_cardID,
+						scenic_id: scenic_id,
+						show_id: show_id,
+						num: num,
+						price: price
+					},
+					success: function(data) {
+						mui.toast(data.msg);
+						if (data.status == 1) {
+							setTimeout(function() {
+								location.href = "{:url('index/index/order')}?id="+data.order_id+"&status=pay_order";
+							}, 2000);
+						}
+					},
+					error: function(e) {
+						mui.toast('请重新提交');
+					}
+				});
+			}
+		}
+	</script>
+
+</html>
